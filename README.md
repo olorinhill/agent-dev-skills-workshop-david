@@ -10,7 +10,7 @@ This repo contains the challenge solutions, implemented as Colab Enterprise Jupy
 |---|-----------|--------|--------|
 | 1 | Real-Time Weather Alerts Agent | 15 | Complete |
 | 2 | Enhancing Agents with Callbacks | 15 | Complete |
-| 3 | Developing Multi-Agent Systems | 15 | Not started |
+| 3 | Developing Multi-Agent Systems | 15 | Complete |
 | 4 | Programming an Agent Workflow | 15 | Not started |
 | 5 | Deploying Agents (bonus) | 10 | Not started |
 | 6 | Emergency Preparedness Assistant (case study) | 40 | Not started |
@@ -28,6 +28,9 @@ Passing the workshop requires 80 of 110 possible points.
 |- challenge-two/
 |  |- callbacks_agent.ipynb        # Challenge 2 notebook
 |  |- README.md                    # Challenge 2 details
+|- challenge-3/
+|  |- multi_agent_system.ipynb     # Challenge 3 notebook
+|  |- README.md                    # Challenge 3 details
 |- Agentic AI with the Google Agent Development Kit (ADK)_ ...pdf  # Workshop slides
 ```
 
@@ -59,6 +62,15 @@ Python dependencies are embedded directly within the notebook using the `%%write
 - **Logging**: Intercepts and logs user prompts (`before_model_callback`) and model responses (`after_model_callback`).
 - **Validation**: Inspects user input before it reaches the model to block non-US locations and malicious prompts.
 - **Chaining**: Combines the validation and logging callbacks into a single `chained_before_callback` flow.
+
+## Challenge Three: Developing Multi-Agent Systems
+
+[`challenge-3/multi_agent_system.ipynb`](challenge-3/multi_agent_system.ipynb) extends the workshop with a three-agent ADK architecture:
+
+- **Root coordinator agent** that receives user requests and routes work.
+- **Weather agent** (from Challenge Two patterns) for US weather and alert responses.
+- **Search agent** using ADK built-in `google_search` for general/current-events lookup.
+- **Delegation evidence** through streamed event output in the test cell, showing transfer and tool-call activity.
 
 ## Notes
 
