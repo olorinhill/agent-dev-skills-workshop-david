@@ -32,5 +32,8 @@ flowchart TD
 
 ## Compatibility note
 
-The notebook's primary implementation follows the challenge requirement and uses `sub_agents=[weather_agent, search_agent]`.  
-Some ADK versions document limitations for built-in tools in sub-agents, so the notebook also includes an optional fallback builder that wraps the search agent using `AgentTool` if needed.
+The notebook's primary implementation follows the challenge requirement and uses `sub_agents=[weather_agent, search_agent]`.
+
+Gemini rejects mixing the built-in `google_search` tool with any other tool (`400 INVALID_ARGUMENT: Multiple tools are supported only when they are all search tools`). When `search_agent` is a sub-agent, ADK would auto-add a `transfer_to_agent` tool next to `google_search`, triggering that error. The notebook avoids this by setting `disallow_transfer_to_parent=True` and `disallow_transfer_to_peers=True` on `search_agent`, so `google_search` stays the only tool in its request while the root still delegates to it.
+
+As an additional safety net, the notebook also includes an optional fallback builder that wraps the search agent using `AgentTool` if a given ADK version still struggles with built-in tools in sub-agents.
