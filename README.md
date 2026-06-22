@@ -9,7 +9,7 @@ This repo contains the challenge solutions, implemented as Colab Enterprise Jupy
 | # | Challenge | Points | Status |
 |---|-----------|--------|--------|
 | 1 | Real-Time Weather Alerts Agent | 15 | Complete |
-| 2 | Enhancing Agents with Callbacks | 15 | Not started |
+| 2 | Enhancing Agents with Callbacks | 15 | Complete |
 | 3 | Developing Multi-Agent Systems | 15 | Not started |
 | 4 | Programming an Agent Workflow | 15 | Not started |
 | 5 | Deploying Agents (bonus) | 10 | Not started |
@@ -24,7 +24,10 @@ Passing the workshop requires 80 of 110 possible points.
 |- README.md                  # This file
 |- challenge-one/
 |  |- weather_alerts_agent.ipynb   # Challenge 1 notebook
-|  |- README.md                    # Google Maps Platform API key for the lab
+|  |- README.md                    # Challenge 1 details
+|- challenge-two/
+|  |- callbacks_agent.ipynb        # Challenge 2 notebook
+|  |- README.md                    # Challenge 2 details
 |- Agentic AI with the Google Agent Development Kit (ADK)_ ...pdf  # Workshop slides
 ```
 
@@ -48,6 +51,14 @@ Passing the workshop requires 80 of 110 possible points.
 ## Dependencies
 
 Python dependencies are embedded directly within the notebook using the `%%writefile requirements.txt` magic command so it is fully self-contained in Colab.
+
+## Challenge Two: Enhancing Agents with Callbacks
+
+[`challenge-two/callbacks_agent.ipynb`](challenge-two/callbacks_agent.ipynb) builds upon the first challenge by adding ADK callback functions:
+
+- **Logging**: Intercepts and logs user prompts (`before_model_callback`) and model responses (`after_model_callback`).
+- **Validation**: Inspects user input before it reaches the model to block non-US locations and malicious prompts.
+- **Chaining**: Combines the validation and logging callbacks into a single `chained_before_callback` flow.
 
 ## Notes
 
