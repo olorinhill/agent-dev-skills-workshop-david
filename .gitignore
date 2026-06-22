@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Workshop slides
+Agentic AI with the Google Agent Development Kit (ADK)_ Skills Validation Workshop.pdf
+
+# Plan files
+challenge-one/plans/
