@@ -36,6 +36,10 @@ Key settings are defined in the notebook's configuration cell:
 
 Google Maps Platform API key (ephemeral lab project): `AIzaSyCG-ZPd1r5ieh7stUWDl0m6a3it1IVXDT8`
 
+## TODO
+
+- [ ] Add support for both Gemini and some other third-party model (Claude, GPT, etc.).
+
 ## Notes
 
 - The notebook runs sequentially with no hidden state and is safe to copy-paste into a fresh Colab Enterprise notebook.
