@@ -11,7 +11,7 @@ This repo contains the challenge solutions, implemented as Colab Enterprise Jupy
 | 1 | Real-Time Weather Alerts Agent | 15 | Complete |
 | 2 | Enhancing Agents with Callbacks | 15 | Complete |
 | 3 | Developing Multi-Agent Systems | 15 | Complete |
-| 4 | Programming an Agent Workflow | 15 | Not started |
+| 4 | Programming an Agent Workflow | 15 | Complete |
 | 5 | Deploying Agents (bonus) | 10 | Not started |
 | 6 | Emergency Preparedness Assistant (case study) | 40 | Not started |
 
@@ -31,6 +31,9 @@ Passing the workshop requires 80 of 110 possible points.
 |- challenge-3/
 |  |- multi_agent_system.ipynb     # Challenge 3 notebook
 |  |- README.md                    # Challenge 3 details
+|- challenge-4/
+|  |- agent_workflow.ipynb         # Challenge 4 notebook
+|  |- README.md                    # Challenge 4 details
 |- Agentic AI with the Google Agent Development Kit (ADK)_ ...pdf  # Workshop slides
 ```
 
@@ -71,6 +74,16 @@ Python dependencies are embedded directly within the notebook using the `%%write
 - **Weather agent** (from Challenge Two patterns) for US weather and alert responses.
 - **Search agent** using ADK built-in `google_search` for general/current-events lookup.
 - **Delegation evidence** through streamed event output in the test cell, showing transfer and tool-call activity.
+
+## Challenge Four: Programming an Agent Workflow
+
+[`challenge-4/agent_workflow.ipynb`](challenge-4/agent_workflow.ipynb) builds **Cloud Security Advisor**, a `SequentialAgent` workflow that answers, verifies, and refines a response:
+
+- **Greeter agent** acknowledges the question and hands off to the workflow.
+- **Search agent** drafts an initial answer using ADK built-in `google_search`.
+- **Critique agent** reviews the draft for accuracy, completeness, clarity, and missing security considerations.
+- **Refine agent** rewrites the answer based on the critique into the final response.
+- **Workflow evidence** through streamed, per-agent event output that shows the answer evolving across stages.
 
 ## Notes
 

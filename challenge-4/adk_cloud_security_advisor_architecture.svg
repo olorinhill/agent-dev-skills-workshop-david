@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="800" viewBox="0 0 1400 800">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#000000" flood-opacity="0.16"/>
+    </filter>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="11" refY="7" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L12,7 L2,12 Z" fill="#5f6368"/>
+    </marker>
+    <linearGradient id="headerGrad" x1="0" x2="1">
+      <stop offset="0%" stop-color="#4285F4"/>
+      <stop offset="100%" stop-color="#34A853"/>
+    </linearGradient>
+    <style>
+      .title { font-family: Arial, Helvetica, sans-serif; font-size: 34px; font-weight: 700; fill: #202124; }
+      .subtitle { font-family: Arial, Helvetica, sans-serif; font-size: 18px; fill: #5f6368; }
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 22px; font-weight: 700; fill: #202124; }
+      .small { font-family: Arial, Helvetica, sans-serif; font-size: 16px; fill: #5f6368; }
+      .tiny { font-family: Arial, Helvetica, sans-serif; font-size: 14px; fill: #5f6368; }
+      .white { fill: #ffffff; }
+      .card { fill: #ffffff; stroke: #dadce0; stroke-width: 2; rx: 22; filter: url(#shadow); }
+      .chip { fill: #f8fafd; stroke: #dadce0; stroke-width: 1.5; rx: 16; }
+      .container { fill: #f8fafd; stroke: #dadce0; stroke-width: 2; rx: 28; }
+      .arrow { stroke: #5f6368; stroke-width: 4; fill: none; marker-end: url(#arrow); }
+      .dash { stroke: #9aa0a6; stroke-width: 3; stroke-dasharray: 8 8; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="1400" height="800" fill="#ffffff"/>
+  <rect x="0" y="0" width="1400" height="92" fill="#f8fafd"/>
+  <rect x="0" y="88" width="1400" height="4" fill="url(#headerGrad)"/>
+
+  <!-- Title -->
+  <text x="70" y="54" class="title">ADK Answer Verification Workflow</text>
+  <text x="70" y="80" class="subtitle">Cloud Security Advisor • SequentialAgent architecture for Search → Critique → Refine</text>
+
+  <!-- User input -->
+  <rect x="70" y="190" width="230" height="128" class="card"/>
+  <circle cx="116" cy="238" r="24" fill="#4285F4"/>
+  <path d="M104 238 A12 12 0 1 0 128 238 A12 12 0 1 0 104 238" fill="#ffffff" opacity=".95"/>
+  <path d="M93 286 C98 264 134 264 139 286" fill="#ffffff" opacity=".95"/>
+  <text x="155" y="232" class="label">User</text>
+  <text x="155" y="262" class="small">asks security</text>
+  <text x="155" y="284" class="small">question</text>
+
+  <!-- Sequential agent container -->
+  <rect x="365" y="145" width="880" height="425" class="container"/>
+  <text x="400" y="192" class="label">SequentialAgent: Cloud Security Advisor</text>
+  <text x="400" y="220" class="small">Runs each sub-agent once in a controlled answer-building pipeline</text>
+
+  <!-- Agent cards -->
+  <rect x="410" y="270" width="170" height="190" class="card"/>
+  <rect x="410" y="270" width="170" height="16" fill="#4285F4" rx="8"/>
+  <circle cx="495" cy="326" r="28" fill="#E8F0FE"/>
+  <text x="481" y="335" font-family="Arial" font-size="28" font-weight="700" fill="#4285F4">G</text>
+  <text x="450" y="382" class="label">Greeter</text>
+  <text x="438" y="416" class="small">Restates the</text>
+  <text x="438" y="438" class="small">user question</text>
+
+  <rect x="630" y="270" width="170" height="190" class="card"/>
+  <rect x="630" y="270" width="170" height="16" fill="#34A853" rx="8"/>
+  <circle cx="715" cy="326" r="28" fill="#E6F4EA"/>
+  <text x="701" y="335" font-family="Arial" font-size="28" font-weight="700" fill="#34A853">S</text>
+  <text x="674" y="382" class="label">Search</text>
+  <text x="658" y="416" class="small">Finds facts and</text>
+  <text x="658" y="438" class="small">drafts answer</text>
+
+  <rect x="850" y="270" width="170" height="190" class="card"/>
+  <rect x="850" y="270" width="170" height="16" fill="#FBBC04" rx="8"/>
+  <circle cx="935" cy="326" r="28" fill="#FEF7E0"/>
+  <text x="921" y="335" font-family="Arial" font-size="28" font-weight="700" fill="#F9AB00">C</text>
+  <text x="885" y="382" class="label">Critique</text>
+  <text x="878" y="416" class="small">Checks quality,</text>
+  <text x="878" y="438" class="small">gaps, clarity</text>
+
+  <rect x="1070" y="270" width="170" height="190" class="card"/>
+  <rect x="1070" y="270" width="170" height="16" fill="#EA4335" rx="8"/>
+  <circle cx="1155" cy="326" r="28" fill="#FCE8E6"/>
+  <text x="1141" y="335" font-family="Arial" font-size="28" font-weight="700" fill="#EA4335">R</text>
+  <text x="1118" y="382" class="label">Refine</text>
+  <text x="1098" y="416" class="small">Rewrites using</text>
+  <text x="1098" y="438" class="small">the critique</text>
+
+  <!-- Arrows -->
+  <path d="M300 254 C330 254 340 254 365 254" class="arrow"/>
+  <path d="M580 365 L630 365" class="arrow"/>
+  <path d="M800 365 L850 365" class="arrow"/>
+  <path d="M1020 365 L1070 365" class="arrow"/>
+
+  <!-- Output -->
+  <rect x="1025" y="625" width="300" height="112" class="card"/>
+  <circle cx="1072" cy="673" r="24" fill="#34A853"/>
+  <path d="M1060 672 L1069 681 L1086 661" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="1110" y="670" class="label">Final Answer</text>
+  <text x="1110" y="700" class="small">verified, clearer,</text>
+  <text x="1110" y="722" class="small">and notebook-ready</text>
+
+  <path d="M1155 460 L1155 525 C1155 580 1175 605 1175 625" class="arrow"/>
+
+  <!-- Notebook event log -->
+  <rect x="70" y="625" width="780" height="112" class="card"/>
+  <text x="105" y="670" class="label">Notebook Event Log</text>
+  <text x="105" y="702" class="small">Prints each event so the lab output shows sub-agent execution and response evolution.</text>
+  <rect x="515" y="654" width="72" height="34" class="chip"/>
+  <text x="535" y="676" class="tiny">GREETER</text>
+  <rect x="600" y="654" width="70" height="34" class="chip"/>
+  <text x="622" y="676" class="tiny">SEARCH</text>
+  <rect x="683" y="654" width="78" height="34" class="chip"/>
+  <text x="702" y="676" class="tiny">CRITIQUE</text>
+  <rect x="774" y="654" width="68" height="34" class="chip"/>
+  <text x="793" y="676" class="tiny">REFINE</text>
+
+  <path d="M805 570 C805 610 735 625 735 625" class="dash"/>
+
+  <!-- Data side note -->
+  <rect x="70" y="380" width="230" height="138" fill="#F8FAFD" stroke="#dadce0" stroke-width="2" rx="22"/>
+  <text x="105" y="425" class="label">Sample input</text>
+  <text x="105" y="458" class="small">“Best practices for</text>
+  <text x="105" y="480" class="small">securing a private</text>
+  <text x="105" y="502" class="small">GKE cluster?”</text>
+</svg>
