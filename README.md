@@ -12,7 +12,7 @@ This repo contains the challenge solutions, implemented as Colab Enterprise Jupy
 | 2 | Enhancing Agents with Callbacks | 15 | Complete |
 | 3 | Developing Multi-Agent Systems | 15 | Complete |
 | 4 | Programming an Agent Workflow | 15 | Complete |
-| 5 | Deploying Agents (bonus) | 10 | Not started |
+| 5 | Deploying Agents (bonus) | 10 | Complete |
 | 6 | Emergency Preparedness Assistant (case study) | 40 | Not started |
 
 Passing the workshop requires 80 of 110 possible points.
@@ -34,6 +34,9 @@ Passing the workshop requires 80 of 110 possible points.
 |- challenge-4/
 |  |- agent_workflow.ipynb         # Challenge 4 notebook
 |  |- README.md                    # Challenge 4 details
+|- challenge-5/
+|  |- deploy_agent.ipynb           # Challenge 5 notebook
+|  |- README.md                    # Challenge 5 details
 |- Agentic AI with the Google Agent Development Kit (ADK)_ ...pdf  # Workshop slides
 ```
 
@@ -84,6 +87,14 @@ Python dependencies are embedded directly within the notebook using the `%%write
 - **Critique agent** reviews the draft for accuracy, completeness, clarity, and missing security considerations.
 - **Refine agent** rewrites the answer based on the critique into the final response.
 - **Workflow evidence** through streamed, per-agent event output that shows the answer evolving across stages.
+
+## Challenge Five: Deploying an Agent to Agent Platform
+
+[`challenge-5/deploy_agent.ipynb`](challenge-5/deploy_agent.ipynb) deploys the Challenge Four **Cloud Security Advisor** workflow to **Vertex AI Agent Engine** and tests it:
+
+- **Rebuilds the agent** (the `SequentialAgent` from Challenge Four) as `root_agent`.
+- **Deploys to Agent Platform** by wrapping it in `agent_engines.AdkApp` and calling `client.agent_engines.create` with a Cloud Storage staging bucket.
+- **Tests the deployed agent** by creating a remote session and streaming a query, printing per-sub-agent events.
 
 ## Notes
 
