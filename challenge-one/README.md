@@ -13,27 +13,26 @@ Demonstrate the ability to create and test an agent using the ADK that:
 ## What the notebook contains
 
 - **`get_lat_lon`** - converts a place name to latitude/longitude using the **Google Maps Geocoding API** (PEP 8 type hints + docstring).
-- **`get_weather_forecast`** - retrieves current conditions, a short forecast, and deterministic **alert flags** using the **Google Weather API**.
-- **`get_weather_forecast_nws`** - a documented **National Weather Service** fallback (US-only) used if the Google Weather API is not enabled.
-- **Two models** - the agent runs on **Gemini** (`gemini-2.5-flash`) and on **Claude** (`claude-sonnet-4-5` via the Vertex AI Model Garden using ADK's `LiteLlm` wrapper).
+- **`get_weather_forecast`** - retrieves a short forecast and a detailed forecast using the **National Weather Service (NWS) API** (US-only).
+- **Model** - the agent runs on **Gemini** (`gemini-2.5-flash`) via Vertex AI.
+- **Embedded Dependencies** - `requirements.txt` is embedded directly within the notebook using the `%%writefile` magic command.
 - **Preflight checks** - verify API and model access with clear PASS/FAIL diagnostics before the demo runs.
-- **Tests** - run the Gemini agent across multiple US cities (New York, Chicago, Denver, Miami, Seattle) with assertions, plus a guarded Claude demonstration.
+- **Tests** - run the Gemini agent across multiple US cities (New York, Chicago, Denver, Miami, Seattle) with assertions.
 
 ## How to run
 
 1. Open [`weather_alerts_agent.ipynb`](weather_alerts_agent.ipynb) in **Agent Platform Colab Enterprise** (or a Vertex AI-authenticated Jupyter environment).
 2. Run the cells top to bottom. After the install cell you may need to restart the runtime, then continue.
 3. Check the **preflight** output. Before grading, confirm these are enabled on the GCP project:
-   - Geocoding API, Weather API, and Vertex AI API (the Maps key must be authorized for Geocoding and Weather).
-   - Claude Sonnet 4.5 enabled in the Vertex AI Model Garden, region `us-east5`. If unavailable, the Claude demo is skipped gracefully and the Gemini agent still satisfies the core requirement.
+   - Geocoding API and Vertex AI API (the Maps key must be authorized for Geocoding).
 
 ## Configuration
 
 Key settings are defined in the notebook's configuration cell:
 
 - `PROJECT_ID` - the GCP project.
-- `GOOGLE_MAPS_API_KEY` - Google Maps Platform key, used for both the Geocoding and Weather APIs.
-- `GEMINI_MODEL` / `CLAUDE_MODEL_ID` - the two models.
+- `GOOGLE_MAPS_API_KEY` - Google Maps Platform key, used for the Geocoding API.
+- `GEMINI_MODEL` - the Gemini model identifier.
 
 Google Maps Platform API key (ephemeral lab project): `AIzaSyCG-ZPd1r5ieh7stUWDl0m6a3it1IVXDT8`
 
