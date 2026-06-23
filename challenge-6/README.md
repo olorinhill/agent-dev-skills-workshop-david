@@ -27,7 +27,7 @@ Demonstrate the ability to build and validate a complex agent system using the G
 
 ## Architecture
 
-![ReadyNow - Federal Emergency Machine Assistant architecture](ReadNow_Architecture.png)
+![ReadyNow - Federal Emergency Machine Assistant architecture](https://raw.githubusercontent.com/olorinhill/agent-dev-skills-workshop-david/main/challenge-6/ReadNow_Architecture.png)
 
 <details>
 <summary>Text version (mermaid)</summary>
