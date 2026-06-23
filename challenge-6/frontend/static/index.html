@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ReadyNow Frontend</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>ReadyNow Emergency Assistant</h1>
+      <p class="subtitle">Test the deployed FEMA challenge agent through a simple chat UI.</p>
+
+      <label for="userId">User ID</label>
+      <input id="userId" value="frontend-user" />
+
+      <label for="message">Message</label>
+      <textarea id="message" rows="6" placeholder="Example: I am in Miami, FL. What should I prepare for if a tropical storm is forecast tomorrow?"></textarea>
+
+      <button id="sendBtn" type="button">Send</button>
+
+      <section>
+        <h2>Answer</h2>
+        <pre id="answer"></pre>
+      </section>
+
+      <section>
+        <h2>Event Authors</h2>
+        <pre id="authors"></pre>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

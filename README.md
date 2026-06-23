@@ -13,7 +13,7 @@ This repo contains the challenge solutions, implemented as Colab Enterprise Jupy
 | 3 | Developing Multi-Agent Systems | 15 | Complete |
 | 4 | Programming an Agent Workflow | 15 | Complete |
 | 5 | Deploying Agents (bonus) | 10 | Complete |
-| 6 | Emergency Preparedness Assistant (case study) | 40 | Not started |
+| 6 | Emergency Preparedness Assistant (case study) | 40 | Complete |
 
 Passing the workshop requires 80 of 110 possible points.
 
@@ -37,6 +37,12 @@ Passing the workshop requires 80 of 110 possible points.
 |- challenge-5/
 |  |- deploy_agent.ipynb           # Challenge 5 notebook
 |  |- README.md                    # Challenge 5 details
+|- challenge-6/
+|  |- emergency_preparedness.ipynb # Challenge 6 notebook
+|  |- README.md                    # Challenge 6 details
+|  |- agent/                       # Reusable ADK modules
+|  |- tests/                       # Pytest deployed-agent tests
+|  |- frontend/                    # FastAPI test UI (local/Cloud Run)
 |- Agentic AI with the Google Agent Development Kit (ADK)_ ...pdf  # Workshop slides
 ```
 
@@ -59,7 +65,7 @@ Passing the workshop requires 80 of 110 possible points.
 
 ## Dependencies
 
-Python dependencies are embedded directly within the notebook using the `%%writefile requirements.txt` magic command so it is fully self-contained in Colab.
+Challenges 1-5 embed dependencies directly in notebook cells. Challenge 6 also includes committed requirement files under `challenge-6/` to support pytest and frontend execution outside the notebook.
 
 ## Challenge Two: Enhancing Agents with Callbacks
 
@@ -95,6 +101,17 @@ Python dependencies are embedded directly within the notebook using the `%%write
 - **Rebuilds the agent** (the `SequentialAgent` from Challenge Four) as `root_agent`.
 - **Deploys to Agent Platform** by wrapping it in `agent_engines.AdkApp` and calling `client.agent_engines.create` with a Cloud Storage staging bucket.
 - **Tests the deployed agent** by creating a remote session and streaming a query, printing per-sub-agent events.
+
+## Challenge Six: Emergency Preparedness Assistant (Case Study)
+
+[`challenge-6/emergency_preparedness.ipynb`](challenge-6/emergency_preparedness.ipynb) implements the ReadyNow FEMA case study end-to-end:
+
+- **Root coordinator + specialist agents** for weather, live search, evacuation routes, and mission-focused Q&A.
+- **Sequential workflow** (`qa_agent` -> `critique_agent` -> `refine_agent`) that validates and improves responses before final output.
+- **Callback logging and input validation** for prompt/response traceability and safety filtering.
+- **Agent Platform deployment + verification** using reusable helper modules in `challenge-6/lib`.
+- **Pytest integration tests** in [`challenge-6/tests/test_deployed_integration.py`](challenge-6/tests/test_deployed_integration.py) for deployed-agent behavior.
+- **FastAPI frontend** in `challenge-6/frontend` for local or Cloud Run testing against the deployed Agent Engine.
 
 ## Notes
 
