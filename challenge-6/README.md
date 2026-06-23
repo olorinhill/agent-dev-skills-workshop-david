@@ -45,6 +45,8 @@ flowchart TD
 
 </details>
 
+> **Note on the "Cloud Run Frontend" in the diagram:** the diagram shows a Cloud Run frontend as a possible deployment topology - you could front the deployed Agent Engine with a web UI on Cloud Run. This repo does **not** include that UI code; the diagram depicts it only as an example of how a frontend would connect to the agent.
+
 ## Project layout
 
 ```text
