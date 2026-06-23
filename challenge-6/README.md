@@ -33,7 +33,7 @@ flowchart TD
     root -. before_model_callback .-> guard["Model Armor + deterministic FEMA scope gate"]
     root -->|AgentTool| weather["weather_agent (geocode + weather)"]
     root -->|AgentTool| route["route_agent (directions)"]
-    root -->|AgentTool| sw["search_workflow (SequentialAgent)"]
+    root -->|transfer_to_agent| sw["search_workflow (SequentialAgent)"]
     sw --> sd["search_agent (google_search draft)"] --> sc["search_critique_agent"] --> sr["search_refine_agent"]
     root --> platform["Agent Platform deployment"]
     frontend["Cloud Run frontend"] --> platform
@@ -164,8 +164,9 @@ docker run --rm -p 8080:8080 \
 
 ## Notes
 
-- Specialists are exposed to the root as `AgentTool`s (not `sub_agents`), so a multi-part prompt (e.g., weather risk plus an evacuation route) triggers multiple tool calls combined into one answer.
+- `weather_agent` and `route_agent` are exposed as `AgentTool`s, so a multi-part prompt (e.g., weather risk plus an evacuation route) triggers multiple tool calls combined into one answer.
+- `search_workflow` is reached by **delegation** (`sub_agents` + `transfer_to_agent`), not as a tool, so its `search_agent` -> `search_critique_agent` -> `search_refine_agent` stages stream as top-level events (full visibility, like challenge-4). Trade-off: because it is a handoff, a search question is not combined in the same turn with weather/route.
 - Only the search path is wrapped in critique -> refine, because that is where the answer is synthesized; `weather_agent` and `route_agent` return deterministic tool data and are left plain.
-- `google_search` stays isolated inside `search_agent` (the `AgentTool` runs it in its own model call), so there is no built-in-tool mixing at the root.
+- `google_search` stays isolated inside `search_agent` (its own workflow stage), so there is no built-in-tool mixing at the root.
 - Scope is enforced two ways: a deterministic FEMA keyword/capability gate in `before_model_callback` (after Model Armor `sanitizeUserPrompt`), plus the root instruction that refuses off-topic requests.
 - This workshop code targets ephemeral lab projects; avoid hard-coded keys in long-lived environments.
