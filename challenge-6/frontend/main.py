@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any, Dict, Iterable, List, Tuple
 import os
-import sys
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,12 +12,65 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+import vertexai
+from vertexai import agent_engines
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
 
-from lib.remote_client import get_remote_agent, list_authors, stream_remote_query  # noqa: E402
+def get_remote_agent(resource_name: str, project_id: str, location: str) -> Any:
+    """Fetch an already deployed Agent Engine by full resource name."""
+    client = vertexai.Client(project=project_id, location=location)
+
+    # SDK surfaces can vary across versions, so use guarded fallbacks.
+    if hasattr(client, "agent_engines") and hasattr(client.agent_engines, "get"):
+        return client.agent_engines.get(resource_name)
+
+    if hasattr(agent_engines, "get"):
+        return agent_engines.get(resource_name)
+
+    raise RuntimeError("Current SDK version does not expose an agent engine get() method.")
+
+
+def _extract_text(event: Dict[str, Any]) -> str:
+    content = event.get("content") or {}
+    parts = content.get("parts") or []
+    if not parts:
+        return ""
+    return str(parts[0].get("text") or "").strip()
+
+
+def stream_remote_query(
+    remote_agent: Any,
+    message: str,
+    user_id: str = "student",
+    session_id: str | None = None,
+) -> Tuple[str, List[Dict[str, Any]]]:
+    """Stream a query to a deployed agent and return final text plus full events."""
+    if session_id is None:
+        session = remote_agent.create_session(user_id=user_id)
+        session_id = session["id"] if isinstance(session, dict) else session.id
+
+    events: List[Dict[str, Any]] = []
+    final_text = ""
+    for event in remote_agent.stream_query(
+        user_id=user_id,
+        session_id=session_id,
+        message=message,
+    ):
+        events.append(event)
+        text = _extract_text(event)
+        if text:
+            final_text = text
+    return final_text, events
+
+
+def list_authors(events: Iterable[Dict[str, Any]]) -> List[str]:
+    """Collect unique event authors in appearance order."""
+    ordered: List[str] = []
+    for event in events:
+        author = str(event.get("author") or "").strip()
+        if author and author not in ordered:
+            ordered.append(author)
+    return ordered
 
 
 class ChatRequest(BaseModel):

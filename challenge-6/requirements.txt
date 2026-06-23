@@ -1,6 +1,0 @@
-pandas==2.2.2
-google-adk==1.18.0
-google-cloud-aiplatform[agent_engines,adk]==1.148.1
-requests==2.32.4
-google-cloud-modelarmor
-pydantic==2.12.3

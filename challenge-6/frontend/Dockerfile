@@ -10,7 +10,6 @@ COPY frontend/requirements.txt /app/frontend/requirements.txt
 RUN pip install --no-cache-dir -r /app/frontend/requirements.txt
 
 COPY frontend /app/frontend
-COPY lib /app/lib
 
 WORKDIR /app/frontend
 EXPOSE 8080

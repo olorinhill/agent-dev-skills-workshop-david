@@ -1,6 +1,8 @@
 # Challenge Six: Federal Emergency Machine Assistant (ReadyNow)
 
-This challenge delivers a complete ADK-based emergency preparedness assistant for FEMA's ReadyNow case study. It combines specialist sub-agents, callback-based logging, Model Armor-backed prompt validation, a sequential answer-refinement workflow, Agent Platform deployment code, deployed-agent pytest integration tests, and a lightweight FastAPI frontend.
+This challenge delivers a complete ADK-based emergency preparedness assistant for FEMA's ReadyNow case study. It combines specialist sub-agents, callback-based logging, Model Armor-backed prompt validation, a sequential answer-refinement workflow, Agent Platform deployment code, and in-notebook integration tests, plus a lightweight FastAPI frontend.
+
+The entire agent solution is **self-contained inside [`emergency_preparedness.ipynb`](emergency_preparedness.ipynb)** - dependencies, configuration, tools, callbacks, agents, deployment helpers, and tests all live in notebook cells. The only separate component is the optional FastAPI `frontend/`.
 
 ## Goal
 
@@ -14,7 +16,7 @@ Demonstrate the ability to build and validate a complex multi-agent system using
 - Callback functions for user/model logging and Model Armor-backed user input validation.
 - Local notebook tests and deployed-agent tests.
 - Agent Platform deployment flow.
-- Pytest integration tests for deployed runtime.
+- In-notebook integration checks for the deployed runtime.
 - FastAPI frontend runnable locally and deployable to Cloud Run.
 
 ## Architecture
@@ -34,35 +36,15 @@ flowchart TD
     frontend[CloudRunFrontend] --> platform
 ```
 
-## Image-model prompt for architecture diagram
-
-Use this prompt with your preferred image model:
-
-> Create a clean technical architecture diagram titled "FEMA ReadyNow Emergency Preparedness Multi-Agent System". Show: (1) User chat interface, (2) Root coordinator agent, (3) Weather Forecast Agent calling Google Weather API and Geocoding, (4) Internet Search Agent calling Google Search, (5) Route Agent calling Google Maps Routes API, (6) Q&A Agent for safety responses, (7) Sequential validation pipeline with Answer -> Critique -> Refine stages, (8) Callback layer for prompt/response logging and user-input validation, (9) Agent Platform deployment boundary on Google Cloud, (10) Frontend service on Cloud Run invoking deployed Agent Engine. Include directional arrows for data flow, grouped boxes for Local Testing vs Deployed Runtime, and labels for session state and event streaming. Style: modern, minimal, high contrast, white background, blue/gray palette, legible text, presentation-ready.
+The notebook also reserves an architecture-diagram image placeholder at the top of the first cell; replace `architecture.png` there with the provided diagram.
 
 ## Project layout
 
 ```text
 challenge-6/
-|- emergency_preparedness.ipynb
+|- emergency_preparedness.ipynb   # Self-contained agent solution (code + tests + markdown)
 |- README.md
-|- requirements.txt
-|- requirements-dev.txt
-|- pytest.ini
-|- agent/
-|  |- __init__.py
-|  |- config.py
-|  |- callbacks.py
-|  |- tools.py
-|  |- root_agent.py
-|- lib/
-|  |- __init__.py
-|  |- local_runner.py
-|  |- remote_client.py
-|- tests/
-|  |- conftest.py
-|  |- test_deployed_integration.py
-|- frontend/
+|- frontend/                      # Separate FastAPI service (local / Cloud Run)
    |- main.py
    |- requirements.txt
    |- Dockerfile
@@ -76,16 +58,19 @@ challenge-6/
 
 Open [`emergency_preparedness.ipynb`](emergency_preparedness.ipynb) in Colab Enterprise and run cells in order:
 
-1. Install dependencies.
+1. Install dependencies (inline; no external requirements file).
 2. Configure environment and initialize Vertex AI.
-3. Build the ReadyNow root agent.
-4. Test locally via `AdkApp` event stream.
-5. Deploy to Agent Platform.
-6. Test remote query against deployed runtime.
+3. Model Armor preflight check.
+4. Define tool functions.
+5. Define callbacks (logging + Model Armor validation).
+6. Build the ReadyNow root agent.
+7. Local execution helpers and local test prompts.
+8. Deploy to Agent Platform.
+9. Test the deployed runtime and run in-notebook integration checks.
 
 ## Model Armor setup
 
-Set these before running notebook Step 2:
+Set these before running the notebook configuration cell (Step 2):
 
 ```bash
 export GOOGLE_CLOUD_PROJECT="your-project-id"
@@ -94,7 +79,7 @@ export GOOGLE_MAPS_API_KEY="your-maps-key"
 export MODEL_ARMOR_TEMPLATE_ID="projects/your-project-id/locations/us-central1/templates/your-template-id"
 ```
 
-You can also provide only template ID and let the callback build the full resource name:
+You can also provide only the template ID and let the callback build the full resource name:
 
 ```bash
 export MODEL_ARMOR_TEMPLATE_ID="your-template-id"
@@ -109,19 +94,17 @@ Important:
 - Keep `MODEL_ARMOR_LOCATION` aligned with the template location.
 - Validation is configured **fail-closed**: if Model Armor is unavailable, requests are blocked.
 
-## Pytest integration tests (deployed agent)
+## In-notebook integration checks
 
-From `challenge-6/`:
+The former standalone pytest suite is now an in-notebook cell (Step 13). It validates both successful refined-response generation and malicious-input blocking against the deployed agent. Set these before running it:
 
 ```bash
-python -m pip install -r requirements-dev.txt
 export GOOGLE_CLOUD_PROJECT="your-project-id"
 export GOOGLE_CLOUD_LOCATION="us-central1"
 export AGENT_ENGINE_RESOURCE_NAME="projects/.../locations/.../reasoningEngines/..."
-pytest -m integration -q
 ```
 
-The tests skip automatically if required environment variables are missing.
+The checks skip automatically when `AGENT_ENGINE_RESOURCE_NAME` is not set.
 
 ## Run the frontend locally
 
