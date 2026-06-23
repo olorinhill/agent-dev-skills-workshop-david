@@ -32,8 +32,9 @@ flowchart TD
     user[User] --> root["ready_now_root_agent (Federal Emergency Machine Assistant)"]
     root -. before_model_callback .-> guard["Model Armor + deterministic FEMA scope gate"]
     root -->|AgentTool| weather["weather_agent (geocode + weather)"]
-    root -->|AgentTool| route["route_agent (directions)"]
+    root -->|AgentTool| route["route_agent (Routes API)"]
     root -->|transfer_to_agent| sw["search_workflow (SequentialAgent)"]
+    route --> routesapi["Routes API (computeRoutes)"]
     sw --> sd["search_agent (google_search draft)"] --> sc["search_critique_agent"] --> sr["search_refine_agent"]
     root --> platform["Agent Platform deployment"]
     frontend["Cloud Run frontend"] --> platform
@@ -70,6 +71,23 @@ Open [`emergency_preparedness.ipynb`](emergency_preparedness.ipynb) in Colab Ent
 7. Local execution helpers and local test prompts.
 8. Deploy to Agent Platform.
 9. Test the deployed runtime and run in-notebook integration checks.
+
+## Required Google APIs (instructor / one-time per project)
+
+Enable these on the lab project before running the notebook (the lab `student-*` account typically lacks permission to enable them):
+
+```bash
+gcloud services enable \
+  geocoding-backend.googleapis.com \
+  weather.googleapis.com \
+  routes.googleapis.com \
+  modelarmor.googleapis.com \
+  --project=your-project-id
+```
+
+- Geocoding API and Weather API back `weather_agent`.
+- Routes API backs `route_agent` (the modern replacement for the deprecated legacy Directions API; the route tool calls `routes.googleapis.com/directions/v2:computeRoutes`).
+- Model Armor API backs input validation (see below).
 
 ## Model Armor setup
 
