@@ -1,6 +1,6 @@
 # Challenge Six: Federal Emergency Machine Assistant (ReadyNow)
 
-This challenge delivers a complete ADK-based emergency preparedness assistant for FEMA's ReadyNow case study. It combines specialist sub-agents, callback-based logging and validation, a sequential answer-refinement workflow, Agent Platform deployment code, deployed-agent pytest integration tests, and a lightweight FastAPI frontend.
+This challenge delivers a complete ADK-based emergency preparedness assistant for FEMA's ReadyNow case study. It combines specialist sub-agents, callback-based logging, Model Armor-backed prompt validation, a sequential answer-refinement workflow, Agent Platform deployment code, deployed-agent pytest integration tests, and a lightweight FastAPI frontend.
 
 ## Goal
 
@@ -11,7 +11,7 @@ Demonstrate the ability to build and validate a complex multi-agent system using
 - Root coordinator agent that describes capabilities and delegates to specialists.
 - Specialist agents for weather forecasting, internet search, evacuation routes, and question answering.
 - Sequential workflow (`qa_agent` -> `critique_agent` -> `refine_agent`) to validate and improve responses.
-- Callback functions for user/model logging and user input validation.
+- Callback functions for user/model logging and Model Armor-backed user input validation.
 - Local notebook tests and deployed-agent tests.
 - Agent Platform deployment flow.
 - Pytest integration tests for deployed runtime.
@@ -83,6 +83,32 @@ Open [`emergency_preparedness.ipynb`](emergency_preparedness.ipynb) in Colab Ent
 5. Deploy to Agent Platform.
 6. Test remote query against deployed runtime.
 
+## Model Armor setup
+
+Set these before running notebook Step 2:
+
+```bash
+export GOOGLE_CLOUD_PROJECT="your-project-id"
+export GOOGLE_CLOUD_LOCATION="us-central1"
+export GOOGLE_MAPS_API_KEY="your-maps-key"
+export MODEL_ARMOR_TEMPLATE_ID="projects/your-project-id/locations/us-central1/templates/your-template-id"
+```
+
+You can also provide only template ID and let the callback build the full resource name:
+
+```bash
+export MODEL_ARMOR_TEMPLATE_ID="your-template-id"
+export MODEL_ARMOR_PROJECT_ID="your-project-id"
+export MODEL_ARMOR_LOCATION="us-central1"
+```
+
+Required permission for the runtime identity:
+- `modelarmor.templates.useToSanitizeUserPrompt` on the Model Armor template (for example via `roles/modelarmor.user`).
+
+Important:
+- Keep `MODEL_ARMOR_LOCATION` aligned with the template location.
+- Validation is configured **fail-closed**: if Model Armor is unavailable, requests are blocked.
+
 ## Pytest integration tests (deployed agent)
 
 From `challenge-6/`:
@@ -141,4 +167,5 @@ docker run --rm -p 8080:8080 \
 ## Notes
 
 - `search_agent` sets `disallow_transfer_to_parent` and `disallow_transfer_to_peers` to avoid the Gemini built-in tool mixing constraint for `google_search`.
+- Prompt safety checks use Model Armor (`sanitizeUserPrompt`) before custom US-location and mission-scope checks.
 - This workshop code targets ephemeral lab projects; avoid hard-coded keys in long-lived environments.
