@@ -4,6 +4,26 @@ ReadyNow - the **Federal Emergency Machine Assistant** - is a US emergency-prepa
 
 The entire agent solution is **self-contained inside [`emergency_preparedness.ipynb`](emergency_preparedness.ipynb)** - dependencies, configuration, tools, callbacks, agents, deployment helpers, and tests all live in notebook cells.
 
+## Running this in your own project (what to change)
+
+The notebook is checked in with the **original lab's values**. To run it in a different GCP project/account, update these in the notebook (every value lives in a cell - there are no external config files):
+
+| What | Where | Replace with |
+| --- | --- | --- |
+| `GOOGLE_CLOUD_PROJECT` | Step 2 credentials cell | your project id |
+| `GOOGLE_CLOUD_LOCATION` | Step 2 credentials cell | your region (default `us-central1`) |
+| `GOOGLE_MAPS_API_KEY` | Step 2 credentials cell | a Maps API key **in your project**, authorized for Geocoding, Weather, and Routes |
+| `MODEL_ARMOR_TEMPLATE_ID` | Step 2 credentials cell | your template id (default `ma-template`; Step 2c auto-creates it) |
+| `AGENT_ENGINE_RESOURCE_NAME` | Step 12 cell | the engine you deploy in Step 11 (see Step 12 for how to find it) |
+
+One-time project setup (requires Owner/Editor - not the lab `student-*` account):
+
+1. **Enable the required APIs** - see [Required Google APIs](#required-google-apis-instructor--one-time-per-project).
+2. **Model Armor template** - Step 2c creates `ma-template` automatically if missing (needs `roles/modelarmor.admin`).
+3. **Grant the Agent Engine runtime SA `roles/modelarmor.user`** - see [Deploying to Agent Engine](#deploying-to-agent-engine-step-11). Do this before/after deploying, before running Steps 12-13.
+
+Then run the cells top to bottom (Step 11 deploys; Steps 12-13 verify the deployed agent).
+
 ## Core services
 
 1. **Weather + emergency planning** - current US weather conditions and risk; when weather is dangerous, ReadyNow proactively follows up with preparedness guidance and offers an evacuation route.
@@ -99,24 +119,18 @@ gcloud services enable modelarmor.googleapis.com --project=your-project-id
 
 The runtime identity needs `roles/modelarmor.admin` to create a template (notebook Step 2c creates `ma-template` automatically if it is missing), or at least `roles/modelarmor.user` if the template already exists. If the API is not enabled or permissions are missing, Step 2c raises a clear error explaining what to fix.
 
-### Environment variables
+### Configuration values
 
-Set these before running the notebook configuration cell (Step 2):
+The notebook's **Step 2 credentials cell** sets these directly via `os.environ[...]` (edit them there - see the table above):
 
-```bash
-export GOOGLE_CLOUD_PROJECT="your-project-id"
-export GOOGLE_CLOUD_LOCATION="us-central1"
-export GOOGLE_MAPS_API_KEY="your-maps-key"
-export MODEL_ARMOR_TEMPLATE_ID="projects/your-project-id/locations/us-central1/templates/your-template-id"
+```python
+os.environ["GOOGLE_CLOUD_PROJECT"] = "your-project-id"
+os.environ["GOOGLE_CLOUD_LOCATION"] = "us-central1"
+os.environ["GOOGLE_MAPS_API_KEY"] = "your-maps-key"
+os.environ["MODEL_ARMOR_TEMPLATE_ID"] = "ma-template"  # short id, or a full projects/.../templates/... name
 ```
 
-You can also provide only the template ID and let the callback build the full resource name:
-
-```bash
-export MODEL_ARMOR_TEMPLATE_ID="your-template-id"
-export MODEL_ARMOR_PROJECT_ID="your-project-id"
-export MODEL_ARMOR_LOCATION="us-central1"
-```
+If the Model Armor template lives in a different project/region than the agent, also set `MODEL_ARMOR_PROJECT_ID` and `MODEL_ARMOR_LOCATION` (commented lines in the same cell).
 
 Required permission for the runtime identity:
 - `modelarmor.templates.useToSanitizeUserPrompt` on the Model Armor template (for example via `roles/modelarmor.user`).
@@ -145,15 +159,7 @@ The dependency requirements pinned for deployment (`DEFAULT_REQUIREMENTS`) inclu
 
 ## In-notebook integration checks
 
-The former standalone pytest suite is now an in-notebook cell (Step 13). It validates both successful refined-response generation and malicious-input blocking against the deployed agent. Set these before running it:
-
-```bash
-export GOOGLE_CLOUD_PROJECT="your-project-id"
-export GOOGLE_CLOUD_LOCATION="us-central1"
-export AGENT_ENGINE_RESOURCE_NAME="projects/.../locations/.../reasoningEngines/..."
-```
-
-The checks skip automatically when `AGENT_ENGINE_RESOURCE_NAME` is not set.
+The former standalone pytest suite is now an in-notebook cell (Step 13). It validates both successful refined-response generation and malicious-input blocking against the deployed agent. It reuses the `AGENT_ENGINE_RESOURCE_NAME` you set in the **Step 12 cell**, so run Step 12 first. The checks skip automatically when `AGENT_ENGINE_RESOURCE_NAME` is not set.
 
 ## Notes
 
