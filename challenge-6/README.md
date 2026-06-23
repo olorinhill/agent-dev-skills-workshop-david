@@ -1,19 +1,25 @@
 # Challenge Six: Federal Emergency Machine Assistant (ReadyNow)
 
-This challenge delivers a complete ADK-based emergency preparedness assistant for FEMA's ReadyNow case study. It combines specialist sub-agents, callback-based logging, Model Armor-backed prompt validation, a sequential answer-refinement workflow, Agent Platform deployment code, and in-notebook integration tests, plus a lightweight FastAPI frontend.
+ReadyNow - the **Federal Emergency Machine Assistant** - is a US emergency-preparedness assistant built with the Google ADK. A root LLM orchestrator calls specialist tools, enforces a FEMA-only scope, validates input with Model Armor, and validates its web-sourced answers through a critique/refine workflow. It also includes Agent Platform deployment code, in-notebook integration checks, and a lightweight FastAPI frontend.
 
 The entire agent solution is **self-contained inside [`emergency_preparedness.ipynb`](emergency_preparedness.ipynb)** - dependencies, configuration, tools, callbacks, agents, deployment helpers, and tests all live in notebook cells. The only separate component is the optional FastAPI `frontend/`.
 
+## Core services
+
+1. **Weather + emergency planning** - current US weather conditions and risk; when weather is dangerous, ReadyNow proactively follows up with preparedness guidance and offers an evacuation route.
+2. **Evacuation routes** - driving/route guidance between US locations, composable with the weather flow (e.g., leave town ahead of a hurricane or wildfire).
+3. **FEMA / natural-disaster guidance** - validated, web-sourced answers for disasters (weather, earthquakes, etc.), official FEMA guidance, nearby shelters, active alerts/declarations, and emergency supply-kit / family-plan help.
+
 ## Goal
 
-Demonstrate the ability to build and validate a complex multi-agent system using the Google Agent Development Kit (ADK), then deploy and test it on Agent Platform.
+Demonstrate the ability to build and validate a complex agent system using the Google Agent Development Kit (ADK), then deploy and test it on Agent Platform.
 
 ## Requirements met
 
-- Root coordinator agent that describes capabilities and delegates to specialists.
-- Specialist agents for weather forecasting, internet search, evacuation routes, and question answering.
-- Sequential workflow (`qa_agent` -> `critique_agent` -> `refine_agent`) to validate and improve responses.
-- Callback functions for user/model logging and Model Armor-backed user input validation.
+- Root LLM orchestrator that describes its own capabilities and calls specialists as tools (so multi-part prompts are handled in one turn).
+- Specialist tools for weather forecasting, evacuation routes, and a validated internet-search workflow.
+- Validated search path: `search_agent` (draft) -> `search_critique_agent` -> `search_refine_agent`.
+- Deterministic FEMA-only scope gate plus Model Armor input validation, with logging callbacks.
 - Local notebook tests and deployed-agent tests.
 - Agent Platform deployment flow.
 - In-notebook integration checks for the deployed runtime.
@@ -23,17 +29,14 @@ Demonstrate the ability to build and validate a complex multi-agent system using
 
 ```mermaid
 flowchart TD
-    user[User] --> root[readyNowRootAgent]
-    root --> weather[weatherAgent]
-    root --> search[searchAgent]
-    root --> route[routeAgent]
-    root --> workflow[responseWorkflowSequential]
-    workflow --> qa[qaAgent]
-    workflow --> critique[critiqueAgent]
-    workflow --> refine[refineAgent]
-    root --> callbacks[callbacksLogAndValidate]
-    root --> platform[AgentPlatformDeployment]
-    frontend[CloudRunFrontend] --> platform
+    user[User] --> root["ready_now_root_agent (Federal Emergency Machine Assistant)"]
+    root -. before_model_callback .-> guard["Model Armor + deterministic FEMA scope gate"]
+    root -->|AgentTool| weather["weather_agent (geocode + weather)"]
+    root -->|AgentTool| route["route_agent (directions)"]
+    root -->|AgentTool| sw["search_workflow (SequentialAgent)"]
+    sw --> sd["search_agent (google_search draft)"] --> sc["search_critique_agent"] --> sr["search_refine_agent"]
+    root --> platform["Agent Platform deployment"]
+    frontend["Cloud Run frontend"] --> platform
 ```
 
 The notebook also reserves an architecture-diagram image placeholder at the top of the first cell; replace `architecture.png` there with the provided diagram.
@@ -69,6 +72,18 @@ Open [`emergency_preparedness.ipynb`](emergency_preparedness.ipynb) in Colab Ent
 9. Test the deployed runtime and run in-notebook integration checks.
 
 ## Model Armor setup
+
+### Enable the API first (instructor / one-time per project)
+
+Model Armor has **no default template**, and the API is not enabled by default. Before running the notebook, enable the API once for the lab project:
+
+```bash
+gcloud services enable modelarmor.googleapis.com --project=your-project-id
+```
+
+The runtime identity needs `roles/modelarmor.admin` to create a template (notebook Step 2c creates `ma-template` automatically if it is missing), or at least `roles/modelarmor.user` if the template already exists. If the API is not enabled or permissions are missing, Step 2c raises a clear error explaining what to fix.
+
+### Environment variables
 
 Set these before running the notebook configuration cell (Step 2):
 
@@ -149,6 +164,8 @@ docker run --rm -p 8080:8080 \
 
 ## Notes
 
-- `search_agent` sets `disallow_transfer_to_parent` and `disallow_transfer_to_peers` to avoid the Gemini built-in tool mixing constraint for `google_search`.
-- Prompt safety checks use Model Armor (`sanitizeUserPrompt`) before custom US-location and mission-scope checks.
+- Specialists are exposed to the root as `AgentTool`s (not `sub_agents`), so a multi-part prompt (e.g., weather risk plus an evacuation route) triggers multiple tool calls combined into one answer.
+- Only the search path is wrapped in critique -> refine, because that is where the answer is synthesized; `weather_agent` and `route_agent` return deterministic tool data and are left plain.
+- `google_search` stays isolated inside `search_agent` (the `AgentTool` runs it in its own model call), so there is no built-in-tool mixing at the root.
+- Scope is enforced two ways: a deterministic FEMA keyword/capability gate in `before_model_callback` (after Model Armor `sanitizeUserPrompt`), plus the root instruction that refuses off-topic requests.
 - This workshop code targets ephemeral lab projects; avoid hard-coded keys in long-lived environments.
