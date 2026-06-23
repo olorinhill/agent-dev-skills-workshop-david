@@ -38,11 +38,9 @@ Passing the workshop requires 80 of 110 possible points.
 |  |- deploy_agent.ipynb           # Challenge 5 notebook
 |  |- README.md                    # Challenge 5 details
 |- challenge-6/
-|  |- emergency_preparedness.ipynb # Challenge 6 notebook
+|  |- emergency_preparedness.ipynb # Challenge 6 notebook (self-contained)
 |  |- README.md                    # Challenge 6 details
-|  |- agent/                       # Reusable ADK modules
-|  |- tests/                       # Pytest deployed-agent tests
-|  |- frontend/                    # FastAPI test UI (local/Cloud Run)
+|  |- ReadNow_Architecture.png     # Architecture diagram
 |- Agentic AI with the Google Agent Development Kit (ADK)_ ...pdf  # Workshop slides
 ```
 
@@ -65,7 +63,7 @@ Passing the workshop requires 80 of 110 possible points.
 
 ## Dependencies
 
-Challenges 1-5 embed dependencies directly in notebook cells. Challenge 6 also includes committed requirement files under `challenge-6/` to support pytest and frontend execution outside the notebook.
+All challenges embed dependencies directly in notebook cells; challenge 6 is fully self-contained in its notebook.
 
 ## Challenge Two: Enhancing Agents with Callbacks
 
@@ -104,14 +102,12 @@ Challenges 1-5 embed dependencies directly in notebook cells. Challenge 6 also i
 
 ## Challenge Six: Emergency Preparedness Assistant (Case Study)
 
-[`challenge-6/emergency_preparedness.ipynb`](challenge-6/emergency_preparedness.ipynb) implements the ReadyNow FEMA case study end-to-end:
+[`challenge-6/emergency_preparedness.ipynb`](challenge-6/emergency_preparedness.ipynb) implements the ReadyNow FEMA case study end-to-end, fully self-contained in the notebook:
 
-- **Root coordinator + specialist agents** for weather, live search, evacuation routes, and mission-focused Q&A.
-- **Sequential workflow** (`qa_agent` -> `critique_agent` -> `refine_agent`) that validates and improves responses before final output.
-- **Callback logging and input validation** for prompt/response traceability and safety filtering.
-- **Agent Platform deployment + verification** using reusable helper modules in `challenge-6/lib`.
-- **Pytest integration tests** in [`challenge-6/tests/test_deployed_integration.py`](challenge-6/tests/test_deployed_integration.py) for deployed-agent behavior.
-- **FastAPI frontend** in `challenge-6/frontend` for local or Cloud Run testing against the deployed Agent Engine.
+- **Root LLM orchestrator** that calls `weather_agent` and `route_agent` as tools and delegates to a `search_workflow`.
+- **Validated search workflow** (`search_agent` -> `search_critique_agent` -> `search_refine_agent`) that drafts, critiques, and refines web-sourced answers.
+- **Deterministic FEMA-scope gate + Model Armor** input validation, plus logging callbacks.
+- **Agent Platform deployment + verification** with in-notebook integration checks for the deployed runtime.
 
 ## Notes
 

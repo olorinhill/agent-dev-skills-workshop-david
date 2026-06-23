@@ -1,8 +1,8 @@
 # Challenge Six: Federal Emergency Machine Assistant (ReadyNow)
 
-ReadyNow - the **Federal Emergency Machine Assistant** - is a US emergency-preparedness assistant built with the Google ADK. A root LLM orchestrator calls specialist tools, enforces a FEMA-only scope, validates input with Model Armor, and validates its web-sourced answers through a critique/refine workflow. It also includes Agent Platform deployment code, in-notebook integration checks, and a lightweight FastAPI frontend.
+ReadyNow - the **Federal Emergency Machine Assistant** - is a US emergency-preparedness assistant built with the Google ADK. A root LLM orchestrator calls specialist tools, enforces a FEMA-only scope, validates input with Model Armor, and validates its web-sourced answers through a critique/refine workflow. It also includes Agent Platform deployment code and in-notebook integration checks.
 
-The entire agent solution is **self-contained inside [`emergency_preparedness.ipynb`](emergency_preparedness.ipynb)** - dependencies, configuration, tools, callbacks, agents, deployment helpers, and tests all live in notebook cells. The only separate component is the optional FastAPI `frontend/`.
+The entire agent solution is **self-contained inside [`emergency_preparedness.ipynb`](emergency_preparedness.ipynb)** - dependencies, configuration, tools, callbacks, agents, deployment helpers, and tests all live in notebook cells.
 
 ## Core services
 
@@ -23,7 +23,6 @@ Demonstrate the ability to build and validate a complex agent system using the G
 - Local notebook tests and deployed-agent tests.
 - Agent Platform deployment flow.
 - In-notebook integration checks for the deployed runtime.
-- FastAPI frontend runnable locally and deployable to Cloud Run.
 
 ## Architecture
 
@@ -42,7 +41,6 @@ flowchart TD
     route --> routesapi["Routes API (computeRoutes)"]
     sw --> sd["search_agent (google_search draft)"] --> sc["search_critique_agent"] --> sr["search_refine_agent"]
     root --> platform["Agent Platform deployment"]
-    frontend["Cloud Run frontend"] --> platform
 ```
 
 </details>
@@ -53,14 +51,7 @@ flowchart TD
 challenge-6/
 |- emergency_preparedness.ipynb   # Self-contained agent solution (code + tests + markdown)
 |- README.md
-|- frontend/                      # Separate FastAPI service (local / Cloud Run)
-   |- main.py
-   |- requirements.txt
-   |- Dockerfile
-   |- static/
-      |- index.html
-      |- app.js
-      |- styles.css
+|- ReadNow_Architecture.png       # Architecture diagram
 ```
 
 ## Notebook flow
@@ -161,47 +152,6 @@ export AGENT_ENGINE_RESOURCE_NAME="projects/.../locations/.../reasoningEngines/.
 ```
 
 The checks skip automatically when `AGENT_ENGINE_RESOURCE_NAME` is not set.
-
-## Run the frontend locally
-
-From `challenge-6/frontend/`:
-
-```bash
-python -m pip install -r requirements.txt
-export GOOGLE_CLOUD_PROJECT="your-project-id"
-export GOOGLE_CLOUD_LOCATION="us-central1"
-export AGENT_ENGINE_RESOURCE_NAME="projects/.../locations/.../reasoningEngines/..."
-uvicorn main:app --reload --port 8080
-```
-
-Open [http://localhost:8080](http://localhost:8080).
-
-## Deploy frontend to Cloud Run
-
-From repository root:
-
-```bash
-gcloud builds submit challenge-6 \
-  --tag gcr.io/your-project-id/readynow-frontend:latest \
-  --file challenge-6/frontend/Dockerfile
-
-gcloud run deploy readynow-frontend \
-  --image gcr.io/your-project-id/readynow-frontend:latest \
-  --region us-central1 \
-  --allow-unauthenticated \
-  --set-env-vars GOOGLE_CLOUD_PROJECT=your-project-id,GOOGLE_CLOUD_LOCATION=us-central1,AGENT_ENGINE_RESOURCE_NAME=projects/.../locations/.../reasoningEngines/...
-```
-
-Use `frontend/Dockerfile` for container builds:
-
-```bash
-docker build -f frontend/Dockerfile -t readynow-frontend:local .
-docker run --rm -p 8080:8080 \
-  -e GOOGLE_CLOUD_PROJECT=your-project-id \
-  -e GOOGLE_CLOUD_LOCATION=us-central1 \
-  -e AGENT_ENGINE_RESOURCE_NAME=projects/.../locations/.../reasoningEngines/... \
-  readynow-frontend:local
-```
 
 ## Notes
 
