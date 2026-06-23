@@ -4,6 +4,18 @@ Submission repository for the **Agentic AI with the Google Agent Development Kit
 
 This repo contains the challenge solutions, implemented as Colab Enterprise Jupyter notebooks that build, test, and (later) deploy generative AI agents on Google Cloud using the ADK, Gemini, and third-party models.
 
+## Before you run (using your own GCP project)
+
+These notebooks are checked in with the **original lab's hard-coded values**, so they will not run as-is in a different project/account. Before running any challenge, edit the configuration cell near the top of that notebook and replace:
+
+- `PROJECT_ID` / `GOOGLE_CLOUD_PROJECT` - your GCP project id
+- `LOCATION` / `GOOGLE_CLOUD_LOCATION` - your region (default `us-central1`)
+- `GOOGLE_MAPS_API_KEY` - a Maps API key **in your project** (challenges 1, 2, 3, and 6), authorized for the APIs that challenge uses (Geocoding, Weather, and - for challenge 6 - Routes)
+
+You also need the relevant **Google APIs enabled** on your project (Vertex AI, plus Geocoding/Weather/Routes where used).
+
+**Challenge 6 has additional, deploy-specific values** (Model Armor template id, the deployed Agent Engine resource name) and one-time IAM setup. See [`challenge-6/README.md`](challenge-6/README.md) -> "Running this in your own project (what to change)" for the full checklist.
+
 ## Workshop challenges
 
 | # | Challenge | Points | Status |
@@ -57,13 +69,10 @@ Passing the workshop requires 80 of 110 possible points.
 ### Running it
 
 1. Open the notebook in **Agent Platform Colab Enterprise** (or any Vertex AI-authenticated Jupyter environment).
-2. Run the cells in order. On first run you may need to restart the runtime after the install cell.
-3. The **preflight** cell reports which dependencies are ready. Before grading, ensure these are enabled on the GCP project:
+2. Update the hard-coded `PROJECT_ID` and `GOOGLE_MAPS_API_KEY` in the config cell (see [Before you run](#before-you-run-using-your-own-gcp-project)).
+3. Run the cells in order. On first run you may need to restart the runtime after the install cell.
+4. The **preflight** cell reports which dependencies are ready. Before grading, ensure these are enabled on the GCP project:
    - Geocoding API, Weather API, and Vertex AI API (the Maps key must be authorized for Geocoding and Weather).
-
-## Dependencies
-
-All challenges embed dependencies directly in notebook cells; challenge 6 is fully self-contained in its notebook.
 
 ## Challenge Two: Enhancing Agents with Callbacks
 
@@ -111,5 +120,6 @@ All challenges embed dependencies directly in notebook cells; challenge 6 is ful
 
 ## Notes
 
-- The notebooks are written to run sequentially with no hidden state, so they can be copied and pasted into a fresh Colab Enterprise notebook.
-- API keys are hard-coded for copy-paste convenience because the lab GCP project is ephemeral and destroyed at the end of the workshop. Do not reuse this pattern for long-lived projects.
+- The notebooks are written to run sequentially with no hidden state, so they can be imported into a fresh Colab Enterprise notebook.
+- All challenges embed their dependencies directly in notebook cells (install cells); challenge 6 is fully self-contained in its notebook.
+- **Project id and API keys are hard-coded** (for copy-paste convenience in the ephemeral lab project). To run in any other project/account you must replace them in each notebook's config cell first - see [Before you run](#before-you-run-using-your-own-gcp-project). Do not reuse hard-coded keys for long-lived projects.
