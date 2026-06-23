@@ -27,6 +27,11 @@ Demonstrate the ability to build and validate a complex agent system using the G
 
 ## Architecture
 
+![ReadyNow - Federal Emergency Machine Assistant architecture](ReadNow_Architecture.png)
+
+<details>
+<summary>Text version (mermaid)</summary>
+
 ```mermaid
 flowchart TD
     user[User] --> root["ready_now_root_agent (Federal Emergency Machine Assistant)"]
@@ -40,7 +45,7 @@ flowchart TD
     frontend["Cloud Run frontend"] --> platform
 ```
 
-The notebook also reserves an architecture-diagram image placeholder at the top of the first cell; replace `architecture.png` there with the provided diagram.
+</details>
 
 ## Project layout
 
@@ -126,6 +131,24 @@ Required permission for the runtime identity:
 Important:
 - Keep `MODEL_ARMOR_LOCATION` aligned with the template location.
 - Validation is configured **fail-closed**: if Model Armor is unavailable, requests are blocked.
+
+## Deploying to Agent Engine (Step 11)
+
+The deployed agent runs in its own container, separate from the notebook process, so it needs two things the local run gets for free:
+
+1. **Runtime environment variables.** `deploy_agent` forwards `GOOGLE_MAPS_API_KEY`, `MODEL_ARMOR_TEMPLATE_ID`, `MODEL_ARMOR_PROJECT_ID`, `MODEL_ARMOR_LOCATION`, and `GOOGLE_GENAI_USE_VERTEXAI` from the current environment into the deployment's `env_vars` (plus telemetry). Without these, the deployed agent fail-closes on every prompt (Model Armor template missing) and the weather/route tools error (no Maps key). So make sure these are set in the notebook before deploying.
+
+2. **Model Armor access for the runtime service account.** The Agent Engine runtime identity (`service-<PROJECT_NUMBER>@gcp-sa-aiplatform-re.iam.gserviceaccount.com`) must be able to call `sanitizeUserPrompt`. Grant it once:
+
+```bash
+gcloud projects add-iam-policy-binding your-project-id \
+  --member="serviceAccount:service-PROJECT_NUMBER@gcp-sa-aiplatform-re.iam.gserviceaccount.com" \
+  --role="roles/modelarmor.user"
+```
+
+(Find `PROJECT_NUMBER` with `gcloud projects describe your-project-id --format='value(projectNumber)'`, or read it from the deployed engine's `effective_identity`.) Without this, the deployed agent returns "Model Armor safety validation is temporarily unavailable" for every request.
+
+The dependency requirements pinned for deployment (`DEFAULT_REQUIREMENTS`) include `requests==2.32.4` (required by `google-adk==1.18.0`) and `google-cloud-modelarmor` (needed by the validation callback at runtime).
 
 ## In-notebook integration checks
 
